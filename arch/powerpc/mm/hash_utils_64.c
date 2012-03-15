@@ -55,6 +55,7 @@
 #include <asm/spu.h>
 #include <asm/udbg.h>
 #include <asm/code-patching.h>
+#include <asm/firmware.h>
 
 #ifdef DEBUG
 #define DBG(fmt...) udbg_printf(fmt)
@@ -745,12 +746,9 @@ void __init early_init_mmu(void)
 	 */
 	htab_initialize();
 
-	/* Initialize stab / SLB management except on iSeries
-	 */
+	/* Initialize stab / SLB management */
 	if (mmu_has_feature(MMU_FTR_SLB))
 		slb_initialize();
-	else if (!firmware_has_feature(FW_FEATURE_ISERIES))
-		stab_initialize(get_paca()->stab_real);
 }
 
 #ifdef CONFIG_SMP
@@ -761,8 +759,7 @@ void __cpuinit early_init_mmu_secondary(void)
 		mtspr(SPRN_SDR1, _SDR1);
 
 	/* Initialize STAB/SLB. We use a virtual address as it works
-	 * in real mode on pSeries and we want a virtual address on
-	 * iSeries anyway
+	 * in real mode on pSeries.
 	 */
 	if (mmu_has_feature(MMU_FTR_SLB))
 		slb_initialize();

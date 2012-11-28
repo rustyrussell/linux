@@ -23,6 +23,7 @@
  */
 
 #include <linux/threads.h>
+#include <linux/init.h>
 #include <asm/reg.h>
 #include <asm/page.h>
 #include <asm/mmu.h>
@@ -371,6 +372,8 @@ _GLOBAL(__start_initialization_multiplatform)
 	b	.__after_prom_start
 #endif /* CONFIG_PPC_BOOK3E */
 
+	__REF
+
 _INIT_STATIC(__boot_from_prom)
 #ifdef CONFIG_PPC_OF_BOOT_TRAMPOLINE
 	/* Save parameters */
@@ -408,6 +411,8 @@ _INIT_STATIC(__boot_from_prom)
 	/* We never return. We also hit that trap if trying to boot
 	 * from OF while CONFIG_PPC_OF_BOOT_TRAMPOLINE isn't selected */
 	trap
+
+	.text
 
 _STATIC(__after_prom_start)
 #ifdef CONFIG_RELOCATABLE
@@ -703,6 +708,8 @@ _GLOBAL(relative_toc)
 	blr
 
 p_toc:	.llong	__toc_start + 0x8000 - 0b
+
+	__REF
 
 /*
  * This is where the main kernel code starts.

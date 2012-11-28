@@ -187,6 +187,11 @@ END_FTR_SECTION_IFSET(CPU_FTR_DUAL_PLL_750FX)
 
 	.data
 
+/*
+ * hmm, should this ".text" be here?  The following _GLOBAL()s
+ * used to switch to the text section
+ */
+	.text
 _GLOBAL(nap_save_msscr0)
 	.space	4*NR_CPUS
 

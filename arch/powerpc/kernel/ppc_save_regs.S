@@ -13,6 +13,8 @@
 #include <asm/asm-offsets.h>
 #include <asm/ptrace.h>
 
+	.text
+
 /*
  * Grab the register values as they are now.
  * This won't do a particularly good job because we really

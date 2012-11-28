@@ -22,6 +22,8 @@
 
 /* Instructions operating on single parameters */
 
+	.text
+
 /*
  * Single operation with one input operand
  *

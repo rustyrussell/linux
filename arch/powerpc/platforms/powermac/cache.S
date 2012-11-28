@@ -18,6 +18,8 @@
 #include <asm/ppc_asm.h>
 #include <asm/cputable.h>
 
+	.text
+
 /*
  * Flush and disable all data caches (dL1, L2, L3). This is used
  * when going to sleep, when doing a PMU based cpufreq transition,

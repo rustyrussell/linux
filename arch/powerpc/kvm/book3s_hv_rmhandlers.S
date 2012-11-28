@@ -29,6 +29,8 @@
 #include <asm/kvm_book3s_asm.h>
 #include <asm/mmu-hash64.h>
 
+	.text
+
 /*****************************************************************************
  *                                                                           *
  *        Real Mode handlers that need to be in the linear mapping           *

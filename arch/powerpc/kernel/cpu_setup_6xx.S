@@ -17,6 +17,7 @@
 #include <asm/cache.h>
 #include <asm/mmu.h>
 
+	.text
 _GLOBAL(__setup_cpu_603)
 	mflr	r5
 BEGIN_MMU_FTR_SECTION

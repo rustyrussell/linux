@@ -45,6 +45,8 @@
 #define LOAD_MSR_KERNEL(r, x)	li r,(x)
 #endif
 
+	.text
+
 #ifdef CONFIG_BOOKE
 	.globl	mcheck_transfer_to_handler
 mcheck_transfer_to_handler:

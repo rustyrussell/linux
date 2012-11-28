@@ -36,6 +36,7 @@
 	(MMUCR1_EXTEND_PID | MMUCR1_CSINV_NEVER | MMUCR1_IRRE | \
 	 MMUCR1_DRRE | MMUCR1_TLBWE_BINV)
 
+	.text
 _GLOBAL(__setup_cpu_a2)
 	/* Some of these are actually thread local and some are
 	 * core local but doing it always won't hurt

@@ -19,6 +19,7 @@
 #include <asm/mmu-book3e.h>
 #include <asm/asm-offsets.h>
 
+	.text
 _GLOBAL(__e500_icache_setup)
 	mfspr	r0, SPRN_L1CSR1
 	andi.	r3, r0, L1CSR1_ICE

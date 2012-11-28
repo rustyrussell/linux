@@ -12,6 +12,8 @@
 #include <asm/errno.h>
 #include <asm/ppc_asm.h>
 
+	.text
+
 _GLOBAL(memset)
 	neg	r0,r3
 	rlwimi	r4,r4,8,16,23

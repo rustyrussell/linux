@@ -58,6 +58,8 @@ _GLOBAL(do_load_up_transact_altivec)
 	blr
 #endif
 
+	.text
+
 /*
  * load_up_altivec(unused, unused, tsk)
  * Disable VMX for the task which had it previously,

@@ -16,6 +16,7 @@
 #include <asm/asm-offsets.h>
 #include <asm/cache.h>
 
+	.text
 /* Entry: r3 = crap, r4 = ptr to cputable entry
  *
  * Note that we can be called twice for pseudo-PVRs

@@ -19,6 +19,8 @@
  */
 #include <asm/ppc_asm.h>
 
+	.text
+
 	.macro err1
 100:
 	.section __ex_table,"a"

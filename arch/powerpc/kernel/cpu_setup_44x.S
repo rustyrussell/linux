@@ -17,6 +17,7 @@
 #include <asm/cputable.h>
 #include <asm/ppc_asm.h>
 
+	.text
 _GLOBAL(__setup_cpu_440ep)
 	b	__init_fpu_44x
 _GLOBAL(__setup_cpu_440epx)

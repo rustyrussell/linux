@@ -28,6 +28,8 @@
 #include <asm/exception-64s.h>
 #endif
 
+	.text
+
 /*****************************************************************************
  *                                                                           *
  *        Real Mode handlers that need to be in low physical memory          *

@@ -14,6 +14,8 @@
 #include <asm/asm-offsets.h>
 #include <asm/opal.h>
 
+	.text
+
 /* TODO:
  *
  * - Trace irqs in/off (needs saving/restoring all args, argh...)

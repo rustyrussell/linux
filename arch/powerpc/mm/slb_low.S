@@ -23,6 +23,8 @@
 #include <asm/pgtable.h>
 #include <asm/firmware.h>
 
+	.text
+
 /* void slb_allocate_realmode(unsigned long ea);
  *
  * Create an SLB entry for the given EA (user or kernel).

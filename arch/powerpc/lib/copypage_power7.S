@@ -20,6 +20,8 @@
 #include <asm/page.h>
 #include <asm/ppc_asm.h>
 
+	.text
+
 _GLOBAL(copypage_power7)
 	/*
 	 * We prefetch both the source and destination using enhanced touch

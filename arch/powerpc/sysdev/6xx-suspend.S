@@ -16,6 +16,8 @@
 #include <asm/thread_info.h>
 #include <asm/asm-offsets.h>
 
+	.text
+
 _GLOBAL(mpc6xx_enter_standby)
 	mflr	r4
 

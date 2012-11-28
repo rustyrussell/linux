@@ -43,6 +43,8 @@
 1:	cmpd 	r3,r3;		\
 	bne	1b
 
+	.text
+
 _doze:
 	PRE_SLEEP_SEQUENCE
 	DOZE

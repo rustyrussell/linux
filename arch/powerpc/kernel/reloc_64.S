@@ -15,6 +15,8 @@ RELA = 7
 RELACOUNT = 0x6ffffff9
 R_PPC64_RELATIVE = 22
 
+	.text
+
 /*
  * r3 = desired final address of kernel
  */

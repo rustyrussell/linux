@@ -25,6 +25,7 @@
 #include <asm/asm-offsets.h>
 #include <asm/cache.h>
 
+	.text
 /* Right now, restore and setup are the same thing */
 _GLOBAL(__restore_cpu_pa6t)
 _GLOBAL(__setup_cpu_pa6t)

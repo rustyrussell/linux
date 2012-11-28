@@ -39,6 +39,11 @@
 	.section .data
 	.align	5
 
+/*
+ * Should this ".text" be here?  The _GLOBAL() used to have
+ * the ".text" embedded in it.
+ */
+	.text
 _GLOBAL(swsusp_save_area)
 	.space	SL_SIZE
 

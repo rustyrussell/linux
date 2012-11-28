@@ -22,6 +22,8 @@
 
 /* Note: This code relies on -mminimal-toc */
 
+	.text
+
 _GLOBAL(__arch_hweight8)
 BEGIN_FTR_SECTION
 	b .__sw_hweight8

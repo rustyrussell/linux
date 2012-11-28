@@ -776,6 +776,8 @@ tlb_write_entry:
 	mfspr	r10, SPRN_SPRG_RSCRATCH0
 	rfi					/* Force context change */
 
+	.text
+
 #ifdef CONFIG_SPE
 /* Note that the SPE support is closely modeled after the AltiVec
  * support.  Changes to one are likely to be applicable to the

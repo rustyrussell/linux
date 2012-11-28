@@ -63,6 +63,8 @@
 #define NEED_DEAR		0x00000002 /* save faulting DEAR */
 #define NEED_ESR		0x00000004 /* save faulting ESR */
 
+	.text
+
 /*
  * On entry:
  * r4 = vcpu, r5 = srr0, r6 = srr1

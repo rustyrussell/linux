@@ -96,6 +96,7 @@ IMPORTANT:
  * passed in.
  *   -- paulus.
  */
+	.text
 _GLOBAL(_set_L2CR)
 	/* Make sure this is a 750 or 7400 chip */
 BEGIN_FTR_SECTION

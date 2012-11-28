@@ -28,6 +28,8 @@
 #include <asm/exception-64s.h>
 #include <asm/ppc-opcode.h>
 
+	.text
+
 /*****************************************************************************
  *                                                                           *
  *     Guest entry / exit code that is in kernel module memory (vmalloc)     *

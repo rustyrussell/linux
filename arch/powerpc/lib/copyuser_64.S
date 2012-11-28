@@ -9,6 +9,7 @@
 #include <asm/processor.h>
 #include <asm/ppc_asm.h>
 
+	.text
 	.align	7
 _GLOBAL(__copy_tofrom_user)
 BEGIN_FTR_SECTION

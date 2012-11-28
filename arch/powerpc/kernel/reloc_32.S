@@ -31,6 +31,8 @@ R_PPC_RELATIVE = 22
  * r3 = desired final address
  */
 
+	.text
+
 _GLOBAL(relocate)
 
 	mflr	r0		/* Save our LR */

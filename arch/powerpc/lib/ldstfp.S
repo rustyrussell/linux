@@ -37,6 +37,8 @@ reg = reg + 1
 	.endr
 	.endm
 
+	.text
+
 /* Get the contents of frN into fr0; N is in r3. */
 _GLOBAL(get_fpr)
 	mflr	r0

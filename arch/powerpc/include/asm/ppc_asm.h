@@ -281,7 +281,6 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
 #define GLUE(a,b) XGLUE(a,b)
 
 #define _GLOBAL(name) \
-	.section ".text"; \
 	.align 2 ; \
 	.globl name; \
 	.globl GLUE(.,name); \
@@ -295,7 +294,6 @@ name: \
 GLUE(.,name):
 
 #define _INIT_GLOBAL(name) \
-	__REF; \
 	.align 2 ; \
 	.globl name; \
 	.globl GLUE(.,name); \
@@ -309,7 +307,6 @@ name: \
 GLUE(.,name):
 
 #define _KPROBE(name) \
-	.section ".kprobes.text","a"; \
 	.align 2 ; \
 	.globl name; \
 	.globl GLUE(.,name); \
@@ -323,7 +320,6 @@ name: \
 GLUE(.,name):
 
 #define _STATIC(name) \
-	.section ".text"; \
 	.align 2 ; \
 	.section ".opd","aw"; \
 name: \
@@ -335,7 +331,6 @@ name: \
 GLUE(.,name):
 
 #define _INIT_STATIC(name) \
-	__REF; \
 	.align 2 ; \
 	.section ".opd","aw"; \
 name: \
@@ -353,13 +348,11 @@ GLUE(.,name):
 n:
 
 #define _GLOBAL(n)	\
-	.text;		\
 	.stabs __stringify(n:F-1),N_FUN,0,0,n;\
 	.globl n;	\
 n:
 
 #define _KPROBE(n)	\
-	.section ".kprobes.text","a";	\
 	.globl	n;	\
 n:
 

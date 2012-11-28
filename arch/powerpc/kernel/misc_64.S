@@ -67,6 +67,7 @@ PPC64_CACHES:
  *   flush all bytes from start through stop-1 inclusive
  */
 
+	.section	".kprobes.text","a"
 _KPROBE(__flush_icache_range)
 
 /*

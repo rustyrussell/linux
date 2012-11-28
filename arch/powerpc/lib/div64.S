@@ -16,6 +16,8 @@
 #include <asm/ppc_asm.h>
 #include <asm/processor.h>
 
+	.text
+
 _GLOBAL(__div64_32)
 	lwz	r5,0(r3)	# get the dividend into r5/r6
 	lwz	r6,4(r3)

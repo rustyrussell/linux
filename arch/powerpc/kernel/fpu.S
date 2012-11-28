@@ -116,6 +116,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_VSX)
 	blr
 #endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
 
+	.text
 /*
  * This task wants to use the FPU now.
  * On UP, disable FP for the task which had the FPU previously,

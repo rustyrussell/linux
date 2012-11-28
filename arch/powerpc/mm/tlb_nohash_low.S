@@ -35,6 +35,8 @@
 #include <asm/processor.h>
 #include <asm/bug.h>
 
+	.text
+
 #if defined(CONFIG_40x)
 
 /*

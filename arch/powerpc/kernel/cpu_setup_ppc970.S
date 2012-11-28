@@ -16,6 +16,7 @@
 #include <asm/asm-offsets.h>
 #include <asm/cache.h>
 
+	.text
 _GLOBAL(__cpu_preinit_ppc970)
 	/* Do nothing if not running in HV mode */
 	mfmsr	r0

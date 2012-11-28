@@ -17,6 +17,8 @@
 #include <asm/processor.h>
 #include <asm/thread_info.h>
 
+	.text
+
 /* 64-bit version only for now */
 #ifdef CONFIG_PPC64
 

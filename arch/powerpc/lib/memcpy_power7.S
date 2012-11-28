@@ -19,6 +19,8 @@
  */
 #include <asm/ppc_asm.h>
 
+	.text
+
 _GLOBAL(memcpy_power7)
 #ifdef CONFIG_ALTIVEC
 	cmpldi	r5,16

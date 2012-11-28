@@ -26,6 +26,8 @@
 	EMIT_BUG_ENTRY 1b,__FILE__,__LINE__,0;	\
 	blr
 
+	.text
+
 _GLOBAL(__mfdcr)
 	DCR_ACCESS_PROLOG(__mfdcr_table)
 

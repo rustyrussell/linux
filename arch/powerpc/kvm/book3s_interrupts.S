@@ -50,6 +50,8 @@
 	PPC_LL	r30, VCPU_GPR(R30)(vcpu); \
 	PPC_LL	r31, VCPU_GPR(R31)(vcpu); \
 
+	.text
+
 /*****************************************************************************
  *                                                                           *
  *     Guest entry / exit code that is in kernel module memory (highmem)     *

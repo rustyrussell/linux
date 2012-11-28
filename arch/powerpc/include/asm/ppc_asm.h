@@ -293,44 +293,7 @@ name: \
 	.type GLUE(.,name),@function; \
 GLUE(.,name):
 
-#define _INIT_GLOBAL(name) \
-	.align 2 ; \
-	.globl name; \
-	.globl GLUE(.,name); \
-	.section ".opd","aw"; \
-name: \
-	.quad GLUE(.,name); \
-	.quad .TOC.@tocbase; \
-	.quad 0; \
-	.previous; \
-	.type GLUE(.,name),@function; \
-GLUE(.,name):
-
-#define _KPROBE(name) \
-	.align 2 ; \
-	.globl name; \
-	.globl GLUE(.,name); \
-	.section ".opd","aw"; \
-name: \
-	.quad GLUE(.,name); \
-	.quad .TOC.@tocbase; \
-	.quad 0; \
-	.previous; \
-	.type GLUE(.,name),@function; \
-GLUE(.,name):
-
 #define _STATIC(name) \
-	.align 2 ; \
-	.section ".opd","aw"; \
-name: \
-	.quad GLUE(.,name); \
-	.quad .TOC.@tocbase; \
-	.quad 0; \
-	.previous; \
-	.type GLUE(.,name),@function; \
-GLUE(.,name):
-
-#define _INIT_STATIC(name) \
 	.align 2 ; \
 	.section ".opd","aw"; \
 name: \
@@ -350,10 +313,6 @@ n:
 #define _GLOBAL(n)	\
 	.stabs __stringify(n:F-1),N_FUN,0,0,n;\
 	.globl n;	\
-n:
-
-#define _KPROBE(n)	\
-	.globl	n;	\
 n:
 
 #endif

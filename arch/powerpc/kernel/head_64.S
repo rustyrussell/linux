@@ -374,7 +374,7 @@ _GLOBAL(__start_initialization_multiplatform)
 
 	__REF
 
-_INIT_STATIC(__boot_from_prom)
+_STATIC(__boot_from_prom)
 #ifdef CONFIG_PPC_OF_BOOT_TRAMPOLINE
 	/* Save parameters */
 	mr	r31,r3
@@ -714,7 +714,7 @@ p_toc:	.llong	__toc_start + 0x8000 - 0b
 /*
  * This is where the main kernel code starts.
  */
-_INIT_STATIC(start_here_multiplatform)
+_STATIC(start_here_multiplatform)
 	/* set up the TOC */
 	bl      .relative_toc
 	tovirt(r2,r2)
@@ -785,7 +785,7 @@ _INIT_STATIC(start_here_multiplatform)
 	b	.	/* prevent speculative execution */
 	
 	/* This is where all platforms converge execution */
-_INIT_GLOBAL(start_here_common)
+_GLOBAL(start_here_common)
 	/* relocation is on at this point */
 	std	r1,PACAKSAVE(r13)
 

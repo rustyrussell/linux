@@ -328,7 +328,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_UNIFIED_ID_CACHE)
  * flush_icache_range(unsigned long start, unsigned long stop)
  */
 	.section	".kprobes.text","a"
-_KPROBE(__flush_icache_range)
+_ENTRY(__flush_icache_range)
 BEGIN_FTR_SECTION
 	blr				/* for 601, do nothing */
 END_FTR_SECTION_IFSET(CPU_FTR_COHERENT_ICACHE)

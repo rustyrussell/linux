@@ -68,7 +68,7 @@ PPC64_CACHES:
  */
 
 	.section	".kprobes.text","a"
-_KPROBE(__flush_icache_range)
+_GLOBAL(__flush_icache_range)
 
 /*
  * Flush the data cache to memory 

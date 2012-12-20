@@ -41,6 +41,7 @@
 #include <asm/spu_priv1.h>
 #include <asm/setjmp.h>
 #include <asm/reg.h>
+#include <asm/hw_breakpoint.h>
 
 #ifdef CONFIG_PPC64
 #include <asm/hvcall.h>
@@ -604,7 +605,7 @@ static int xmon_sstep(struct pt_regs *regs)
 	return 1;
 }
 
-static int xmon_dabr_match(struct pt_regs *regs)
+static int xmon_break_match(struct pt_regs *regs)
 {
 	if ((regs->msr & (MSR_IR|MSR_PR|MSR_64BIT)) != (MSR_IR|MSR_64BIT))
 		return 0;
@@ -737,8 +738,14 @@ static void insert_bpts(void)
 
 static void insert_cpu_bpts(void)
 {
-	if (dabr.enabled)
-		set_dabr(dabr.address | (dabr.enabled & 7), DABRX_ALL);
+	struct arch_hw_breakpoint brk;
+
+	if (dabr.enabled) {
+		brk.address = dabr.address;
+		brk.type = (dabr.enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
+		brk.len = 8;
+		set_break(&brk);
+	}
 	if (iabr && cpu_has_feature(CPU_FTR_IABR))
 		mtspr(SPRN_IABR, iabr->address
 			 | (iabr->enabled & (BP_IABR|BP_IABR_TE)));
@@ -766,7 +773,7 @@ static void remove_bpts(void)
 
 static void remove_cpu_bpts(void)
 {
-	set_dabr(0, 0);
+	hw_breakpoint_disable();
 	if (cpu_has_feature(CPU_FTR_IABR))
 		mtspr(SPRN_IABR, 0);
 }
@@ -1135,7 +1142,7 @@ bpt_cmds(void)
 				printf(badaddr);
 				break;
 			}
-			dabr.address &= ~7;
+			dabr.address &= ~HW_BRK_TYPE_DABR;
 			dabr.enabled = mode | BP_DABR;
 		}
 		break;
@@ -2842,7 +2849,7 @@ static void xmon_init(int enable)
 		__debugger_bpt = xmon_bpt;
 		__debugger_sstep = xmon_sstep;
 		__debugger_iabr_match = xmon_iabr_match;
-		__debugger_dabr_match = xmon_dabr_match;
+		__debugger_break_match = xmon_break_match;
 		__debugger_fault_handler = xmon_fault_handler;
 	} else {
 		__debugger = NULL;
@@ -2850,7 +2857,7 @@ static void xmon_init(int enable)
 		__debugger_bpt = NULL;
 		__debugger_sstep = NULL;
 		__debugger_iabr_match = NULL;
-		__debugger_dabr_match = NULL;
+		__debugger_break_match = NULL;
 		__debugger_fault_handler = NULL;
 	}
 	xmon_map_scc();

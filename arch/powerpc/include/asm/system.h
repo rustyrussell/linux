@@ -82,7 +82,7 @@ extern int (*__debugger_ipi)(struct pt_regs *regs);
 extern int (*__debugger_bpt)(struct pt_regs *regs);
 extern int (*__debugger_sstep)(struct pt_regs *regs);
 extern int (*__debugger_iabr_match)(struct pt_regs *regs);
-extern int (*__debugger_dabr_match)(struct pt_regs *regs);
+extern int (*__debugger_break_match)(struct pt_regs *regs);
 extern int (*__debugger_fault_handler)(struct pt_regs *regs);
 
 #define DEBUGGER_BOILERPLATE(__NAME) \
@@ -98,7 +98,7 @@ DEBUGGER_BOILERPLATE(debugger_ipi)
 DEBUGGER_BOILERPLATE(debugger_bpt)
 DEBUGGER_BOILERPLATE(debugger_sstep)
 DEBUGGER_BOILERPLATE(debugger_iabr_match)
-DEBUGGER_BOILERPLATE(debugger_dabr_match)
+DEBUGGER_BOILERPLATE(debugger_break_match)
 DEBUGGER_BOILERPLATE(debugger_fault_handler)
 
 #else
@@ -107,17 +107,16 @@ static inline int debugger_ipi(struct pt_regs *regs) { return 0; }
 static inline int debugger_bpt(struct pt_regs *regs) { return 0; }
 static inline int debugger_sstep(struct pt_regs *regs) { return 0; }
 static inline int debugger_iabr_match(struct pt_regs *regs) { return 0; }
-static inline int debugger_dabr_match(struct pt_regs *regs) { return 0; }
+static inline int debugger_break_match(struct pt_regs *regs) { return 0; }
 static inline int debugger_fault_handler(struct pt_regs *regs) { return 0; }
 #endif
 
-extern int set_dabr(unsigned long dabr, unsigned long dabrx);
 #ifdef CONFIG_PPC_ADV_DEBUG_REGS
 extern void do_send_trap(struct pt_regs *regs, unsigned long address,
 			 unsigned long error_code, int signal_code, int brkpt);
 #else
-extern void do_dabr(struct pt_regs *regs, unsigned long address,
-		    unsigned long error_code);
+extern void do_break(struct pt_regs *regs, unsigned long address,
+		     unsigned long error_code);
 #endif
 extern void print_backtrace(unsigned long *);
 extern void flush_instruction_cache(void);

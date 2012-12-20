@@ -64,6 +64,7 @@
 #include <asm/firmware.h>
 #include <asm/eeh.h>
 #include <asm/pSeries_reconfig.h>
+#include <asm/reg.h>
 
 #include "plpar_wrappers.h"
 #include "pseries.h"
@@ -469,6 +470,14 @@ static int pseries_set_xdabr(unsigned long dabr, unsigned long dabrx)
 	return plpar_hcall_norets(H_SET_XDABR, dabr, dabrx);
 }
 
+static int pseries_set_dawr(unsigned long dawr, unsigned long dawrx)
+{
+	/* PAPR says we can't set HYP */
+	dawrx &= ~DAWRX_HYP;
+
+	return  plapr_set_watchpoint0(dawr, dawrx);
+}
+
 #define CMO_CHARACTERISTICS_TOKEN 44
 #define CMO_MAXLENGTH 1026
 
@@ -574,6 +583,9 @@ static void __init pSeries_init_early(void)
 		ppc_md.set_dabr = pseries_set_xdabr;
 	else if (firmware_has_feature(FW_FEATURE_DABR))
 		ppc_md.set_dabr = pseries_set_dabr;
+
+	if (firmware_has_feature(FW_FEATURE_SET_MODE))
+		ppc_md.set_dawr = pseries_set_dawr;
 
 	pSeries_cmo_feature_init();
 	iommu_init_early_pSeries();

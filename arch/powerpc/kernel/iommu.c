@@ -617,6 +617,13 @@ void iommu_free_table(struct iommu_table *tbl, const char *node_name)
 		return;
 	}
 
+	/*
+	 * In case we have reserved the first bit, we should not emit
+	 * the warning below.
+	 */
+	if (tbl->it_offset == 0)
+		clear_bit(0, tbl->it_map);
+
 	/* verify that table contains no entries */
 	/* it_size is in entries, and we're examining 64 at a time */
 	for (i = 0; i < (tbl->it_size/64); i++) {

@@ -784,7 +784,7 @@
  *        HV mode in which case it is HSPRG0
  *
  * 64-bit server:
- *	- SPRG0 unused (reserved for HV on Power4)
+ *	- SPRG0 scratch for TM recheckpoint/reclaim (reserved for HV on Power4)
  *	- SPRG2 scratch for exception vectors
  *	- SPRG3 unused (user visible)
  *      - HSPRG0 stores PACA in HV mode

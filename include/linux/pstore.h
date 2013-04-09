@@ -37,6 +37,7 @@ enum pstore_type_id {
 	PSTORE_TYPE_FTRACE	= 3,
 	/* PPC64 partition types */
 	PSTORE_TYPE_RTAS	= 10,
+	PSTORE_TYPE_OF		= 11,
 	PSTORE_TYPE_UNKNOWN	= 255
 };
 

@@ -430,6 +430,8 @@ static void pSeries_machine_kexec(struct kimage *image)
 }
 #endif
 
+int pseries_root_bridge_prepare(struct pci_host_bridge *bridge);
+
 static void __init pSeries_setup_arch(void)
 {
 	panic_timeout = 10;
@@ -465,6 +467,8 @@ static void __init pSeries_setup_arch(void)
 		ppc_md.enable_pmcs = pseries_lpar_enable_pmcs;
 	else
 		ppc_md.enable_pmcs = power4_enable_pmcs;
+
+	ppc_md.pcibios_root_bridge_prepare = pseries_root_bridge_prepare;
 
 	if (firmware_has_feature(FW_FEATURE_SET_MODE)) {
 		long rc;

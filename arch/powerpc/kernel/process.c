@@ -911,9 +911,6 @@ void prepare_to_copy(struct task_struct *tsk)
 	flush_altivec_to_thread(current);
 	flush_vsx_to_thread(current);
 	flush_spe_to_thread(current);
-#ifdef CONFIG_HAVE_HW_BREAKPOINT
-	flush_ptrace_hw_breakpoint(tsk);
-#endif /* CONFIG_HAVE_HW_BREAKPOINT */
 }
 
 /*
@@ -972,6 +969,10 @@ int copy_thread(unsigned long clone_flags, unsigned long usp,
 	p->thread.ksp = sp;
 	p->thread.ksp_limit = (unsigned long)task_stack_page(p) +
 				_ALIGN_UP(sizeof(struct thread_info), 16);
+
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	p->thread.ptrace_bps[0] = NULL;
+#endif
 
 #ifdef CONFIG_PPC_STD_MMU_64
 	if (mmu_has_feature(MMU_FTR_SLB)) {

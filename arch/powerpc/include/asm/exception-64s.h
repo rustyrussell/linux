@@ -410,7 +410,6 @@ label##_relon_hv:						\
 #define SOFTEN_NOTEST_HV(vec)		_SOFTEN_TEST(EXC_HV, vec)
 
 #define __MASKABLE_EXCEPTION_PSERIES(vec, label, h, extra)		\
-	HMT_MEDIUM_PPR_DISCARD;						\
 	SET_SCRATCH0(r13);    /* save r13 */				\
 	EXCEPTION_PROLOG_0(PACA_EXGEN);					\
 	__EXCEPTION_PROLOG_1(PACA_EXGEN, extra, vec);			\
@@ -423,6 +422,7 @@ label##_relon_hv:						\
 	. = loc;							\
 	.globl label##_pSeries;						\
 label##_pSeries:							\
+	HMT_MEDIUM_PPR_DISCARD;						\
 	_MASKABLE_EXCEPTION_PSERIES(vec, label,				\
 				    EXC_STD, SOFTEN_TEST_PR)
 

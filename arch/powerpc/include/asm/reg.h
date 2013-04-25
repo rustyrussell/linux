@@ -270,6 +270,7 @@
 #define SPRN_HFSCR	0xbe	/* HV=1 Facility Status & Control Register */
 #define   HFSCR_TAR	(1 << (63-55)) /* Enable Target Address Register */
 #define   HFSCR_TM	(1 << (63-58)) /* Enable Transactional Memory */
+#define   HFSCR_PM	(1 << (63-60)) /* Enable prob/priv access to PMU SPRs */
 #define   HFSCR_DSCR	(1 << (63-61)) /* Enable Data Stream Control Register */
 #define   HFSCR_VECVSX	(1 << (63-62)) /* Enable VMX/VSX  */
 #define   HFSCR_FP	(1 << (63-63)) /* Enable Floating Point */
@@ -628,6 +629,7 @@
 #define   MMCR0_FCWAIT	0x00000002UL /* freeze counter in WAIT state */
 #define   MMCR0_FCHV	0x00000001UL /* freeze conditions in hypervisor mode */
 #define SPRN_MMCR1	798
+#define SPRN_MMCR2	769
 #define SPRN_MMCRA	0x312
 #define   MMCRA_SDSYNC	0x80000000UL /* SDAR synced with SIAR */
 #define   MMCRA_SDAR_DCACHE_MISS 0x40000000UL
@@ -642,6 +644,11 @@
 #define   POWER6_MMCRA_SIPR   0x0000020000000000ULL
 #define   POWER6_MMCRA_THRM	0x00000020UL
 #define   POWER6_MMCRA_OTHER	0x0000000EUL
+
+#define SPRN_MMCRH	316	/* Hypervisor monitor mode control register */
+#define SPRN_MMCRS	894	/* Supervisor monitor mode control register */
+#define SPRN_MMCRC	851	/* Core monitor mode control register */
+
 #define SPRN_PMC1	787
 #define SPRN_PMC2	788
 #define SPRN_PMC3	789

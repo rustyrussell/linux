@@ -1,6 +1,7 @@
 #ifndef __ASM_POWERPC_CPUTABLE_H
 #define __ASM_POWERPC_CPUTABLE_H
 
+/* in AT_HWCAP */
 #define PPC_FEATURE_32			0x80000000
 #define PPC_FEATURE_64			0x40000000
 #define PPC_FEATURE_601_INSTR		0x20000000
@@ -32,6 +33,14 @@
 
 #define PPC_FEATURE_TRUE_LE		0x00000002
 #define PPC_FEATURE_PPC_LE		0x00000001
+
+/* in AT_HWCAP2 */
+#define PPC_FEATURE2_ARCH_2_07		0x80000000
+#define PPC_FEATURE2_HTM		0x40000000
+#define PPC_FEATURE2_DSCR		0x20000000
+#define PPC_FEATURE2_EBB		0x10000000
+#define PPC_FEATURE2_ISEL		0x08000000
+#define PPC_FEATURE2_TAR		0x04000000
 
 #ifdef __KERNEL__
 
@@ -255,8 +264,10 @@ extern const char *powerpc_base_platform;
 /* We only set the TM feature if the kernel was compiled with TM supprt */
 #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
 #define CPU_FTR_TM_COMP		CPU_FTR_TM
+#define PPC_FEATURE2_HTM_COMP	PPC_FEATURE2_HTM
 #else
 #define CPU_FTR_TM_COMP		0
+#define PPC_FEATURE2_HTM_COMP	0
 #endif
 
 /* We need to mark all pages as being coherent if we're SMP or we have a

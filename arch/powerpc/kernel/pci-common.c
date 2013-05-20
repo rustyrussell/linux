@@ -1533,9 +1533,10 @@ static void __devinit pcibios_setup_phb_resources(struct pci_controller *hose, s
 	for (i = 0; i < 3; ++i) {
 		res = &hose->mem_resources[i];
 		if (!res->flags) {
-			printk(KERN_ERR "PCI: Memory resource 0 not set for "
-			       "host bridge %s (domain %d)\n",
-			       hose->dn->full_name, hose->global_number);
+			if (i == 0)
+				printk(KERN_ERR "PCI: Memory resource 0 not set for "
+				       "host bridge %s (domain %d)\n",
+				       hose->dn->full_name, hose->global_number);
 			continue;
 		}
 		offset = hose->mem_offset[i];

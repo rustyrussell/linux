@@ -243,9 +243,9 @@ void _exception(int signr, struct pt_regs *regs, int code, unsigned long addr)
 {
 	siginfo_t info;
 	const char fmt32[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-			"at %08lx nip %08lx lr %08lx code %x\n";
+			"at %08lx nip %08lx lr %08lx code %x insn %08x\n";
 	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-			"at %016lx nip %016lx lr %016lx code %x\n";
+			"at %016lx nip %016lx lr %016lx code %x insn %08x\n";
 
 	if (!user_mode(regs)) {
 		die("Exception in kernel mode", regs, signr);
@@ -253,9 +253,14 @@ void _exception(int signr, struct pt_regs *regs, int code, unsigned long addr)
 	}
 
 	if (show_unhandled_signals && unhandled_signal(current, signr)) {
+		u32 insn;
+
+		if (get_user(insn, (u32 __user *)(regs->nip)))
+			insn = 0xffffffff;
+
 		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
 				   current->comm, current->pid, signr,
-				   addr, regs->nip, regs->link, code);
+				   addr, regs->nip, regs->link, code, insn);
 	}
 
 	if (arch_irqs_disabled() && !arch_irq_disabled_regs(regs))

@@ -93,7 +93,7 @@ static void __devinit pnv_pci_p5ioc2_dma_dev_setup(struct pnv_phb *phb,
 	set_iommu_table_base(&pdev->dev, &phb->p5ioc2.iommu_table);
 }
 
-static void __init pnv_pci_init_p5ioc2_phb(struct device_node *np,
+static void __init pnv_pci_init_p5ioc2_phb(struct device_node *np, u64 hub_id,
 					   void *tce_mem, u64 tce_size)
 {
 	struct pnv_phb *phb;
@@ -134,6 +134,7 @@ static void __init pnv_pci_init_p5ioc2_phb(struct device_node *np,
 	phb->hose->first_busno = 0;
 	phb->hose->last_busno = 0xff;
 	phb->hose->private_data = phb;
+	phb->hub_id = hub_id;
 	phb->opal_id = phb_id;
 	phb->type = PNV_PHB_P5IOC2;
 	phb->model = PNV_PHB_MODEL_P5IOC2;
@@ -227,7 +228,8 @@ void __init pnv_pci_init_p5ioc2_hub(struct device_node *np)
 	for_each_child_of_node(np, phbn) {
 		if (of_device_is_compatible(phbn, "ibm,p5ioc2-pcix") ||
 		    of_device_is_compatible(phbn, "ibm,p5ioc2-pciex")) {
-			pnv_pci_init_p5ioc2_phb(phbn, tce_mem, tce_per_phb);
+			pnv_pci_init_p5ioc2_phb(phbn, hub_id,
+					tce_mem, tce_per_phb);
 			tce_mem += tce_per_phb;
 		}
 	}

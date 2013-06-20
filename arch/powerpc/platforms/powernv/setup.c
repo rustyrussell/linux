@@ -94,6 +94,8 @@ static void  __noreturn pnv_restart(char *cmd)
 {
 	long rc = OPAL_BUSY;
 
+	opal_notifier_disable();
+
 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
 		rc = opal_cec_reboot();
 		if (rc == OPAL_BUSY_EVENT)
@@ -108,6 +110,8 @@ static void  __noreturn pnv_restart(char *cmd)
 static void __noreturn pnv_power_off(void)
 {
 	long rc = OPAL_BUSY;
+
+	opal_notifier_disable();
 
 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
 		rc = opal_cec_power_down(0);

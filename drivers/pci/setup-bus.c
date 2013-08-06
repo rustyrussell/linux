@@ -584,10 +584,7 @@ static resource_size_t window_alignment(struct pci_bus *bus,
 		 * Per spec, I/O windows are 4K-aligned, but some
 		 * bridges have an extension to support 1K alignment.
 		 */
-		if (bus->self->io_window_1k)
-			align = PCI_P2P_DEFAULT_IO_ALIGN_1K;
-		else
-			align = PCI_P2P_DEFAULT_IO_ALIGN;
+		align = PCI_P2P_DEFAULT_IO_ALIGN;
 	}
 
 	arch_align = pcibios_window_alignment(bus, type);
@@ -614,10 +611,12 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
 	struct resource *b_res = find_free_bus_resource(bus, IORESOURCE_IO);
 	unsigned long size = 0, size0 = 0, size1 = 0;
 	resource_size_t children_add_size = 0;
+	resource_size_t min_align, align;
 
 	if (!b_res)
  		return;
 
+	min_align = window_alignment(bus, IORESOURCE_IO);
 	list_for_each_entry(dev, &bus->devices, bus_list) {
 		int i;
 
@@ -635,17 +634,21 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
 			else
 				size1 += r_size;
 
+			align = pci_resource_alignment(dev, r);
+			if (align > min_align)
+				min_align = align;
+
 			if (realloc_head)
 				children_add_size += get_res_add_size(realloc_head, r);
 		}
 	}
 	size0 = calculate_iosize(size, min_size, size1,
-			resource_size(b_res), 4096);
+			resource_size(b_res), min_align);
 	if (children_add_size > add_size)
 		add_size = children_add_size;
 	size1 = (!realloc_head || (realloc_head && !add_size)) ? size0 :
 		calculate_iosize(size, min_size, add_size + size1,
-			resource_size(b_res), 4096);
+			resource_size(b_res), min_align);
 	if (!size0 && !size1) {
 		if (b_res->start || b_res->end)
 			dev_info(&bus->self->dev, "disabling bridge window "
@@ -655,7 +658,7 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
 		return;
 	}
 	/* Alignment of the IO window is always 4K */
-	b_res->start = 4096;
+	b_res->start = min_align;
 	b_res->end = b_res->start + size0 - 1;
 	b_res->flags |= IORESOURCE_STARTALIGN;
 	if (size1 > size0 && realloc_head)
@@ -754,6 +757,8 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
 			min_align = align1 >> 1;
 		align += aligns[order];
 	}
+
+	min_align = max(min_align, window_alignment(bus, b_res->flags & mask));
 	size0 = calculate_memsize(size, min_size, 0, resource_size(b_res), min_align);
 	if (children_add_size > add_size)
 		add_size = children_add_size;

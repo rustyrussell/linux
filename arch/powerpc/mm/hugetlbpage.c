@@ -315,7 +315,7 @@ int alloc_bootmem_huge_page(struct hstate *hstate)
 	 * If gpages can be in highmem we can't use the trick of storing the
 	 * data structure in the page; allocate space for this
 	 */
-	m = alloc_bootmem(sizeof(struct huge_bootmem_page));
+	m = memblock_virt_alloc(sizeof(struct huge_bootmem_page), 0);
 	m->phys = gpage_freearray[idx].gpage_list[--nr_gpages];
 #else
 	m = phys_to_virt(gpage_freearray[idx].gpage_list[--nr_gpages]);
@@ -355,6 +355,13 @@ static int __init do_gpage_early_setup(char *param, char *val,
 		if (size != 0) {
 			if (sscanf(val, "%lu", &npages) <= 0)
 				npages = 0;
+			if (npages > MAX_NUMBER_GPAGES) {
+				pr_warn("MMU: %lu pages requested for page "
+					"size %llu KB, limiting to "
+					__stringify(MAX_NUMBER_GPAGES) "\n",
+					npages, size / 1024);
+				npages = MAX_NUMBER_GPAGES;
+			}
 			gpage_npages[shift_to_mmu_psize(__ffs(size))] = npages;
 			size = 0;
 		}

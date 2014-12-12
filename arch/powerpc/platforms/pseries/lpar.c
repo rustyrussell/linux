@@ -284,7 +284,7 @@ static long pSeries_lpar_hpte_updatepp(unsigned long slot,
 				       unsigned long newpp,
 				       unsigned long vpn,
 				       int psize, int apsize,
-				       int ssize, int local)
+				       int ssize, unsigned long inv_flags)
 {
 	unsigned long lpar_rc;
 	unsigned long flags = (newpp & 7) | H_AVPN;
@@ -442,7 +442,7 @@ static void __pSeries_lpar_hugepage_invalidate(unsigned long *slot,
 static void pSeries_lpar_hugepage_invalidate(unsigned long vsid,
 					     unsigned long addr,
 					     unsigned char *hpte_slot_array,
-					     int psize, int ssize)
+					     int psize, int ssize, int local)
 {
 	int i, index = 0;
 	unsigned long s_addr = addr;

@@ -18,6 +18,7 @@
 #include <misc/cxl.h>
 
 #include "cxl.h"
+#include "trace.h"
 
 static int afu_control(struct cxl_afu *afu, u64 command,
 		       u64 result, u64 mask, bool enabled)
@@ -319,8 +320,10 @@ static int add_process_element(struct cxl_context *ctx)
 
 	mutex_lock(&ctx->afu->spa_mutex);
 	pr_devel("%s Adding pe: %i started\n", __func__, ctx->pe);
+	trace_cxl_llcmd_add(ctx->pe);
 	if (!(rc = do_process_element_cmd(ctx, CXL_SPA_SW_CMD_ADD, CXL_PE_SOFTWARE_STATE_V)))
 		ctx->pe_inserted = true;
+	trace_cxl_llcmd_add_done(ctx->pe, rc);
 	pr_devel("%s Adding pe: %i finished\n", __func__, ctx->pe);
 	mutex_unlock(&ctx->afu->spa_mutex);
 	return rc;
@@ -336,9 +339,11 @@ static int terminate_process_element(struct cxl_context *ctx)
 
 	mutex_lock(&ctx->afu->spa_mutex);
 	pr_devel("%s Terminate pe: %i started\n", __func__, ctx->pe);
+	trace_cxl_llcmd_term(ctx->pe);
 	rc = do_process_element_cmd(ctx, CXL_SPA_SW_CMD_TERMINATE,
 				    CXL_PE_SOFTWARE_STATE_V | CXL_PE_SOFTWARE_STATE_T);
 	ctx->elem->software_state = 0;	/* Remove Valid bit */
+	trace_cxl_llcmd_term_done(ctx->pe, rc);
 	pr_devel("%s Terminate pe: %i finished\n", __func__, ctx->pe);
 	mutex_unlock(&ctx->afu->spa_mutex);
 	return rc;
@@ -350,9 +355,11 @@ static int remove_process_element(struct cxl_context *ctx)
 
 	mutex_lock(&ctx->afu->spa_mutex);
 	pr_devel("%s Remove pe: %i started\n", __func__, ctx->pe);
+	trace_cxl_llcmd_rm(ctx->pe);
 	if (!(rc = do_process_element_cmd(ctx, CXL_SPA_SW_CMD_REMOVE, 0)))
 		ctx->pe_inserted = false;
 	slb_invalid(ctx);
+	trace_cxl_llcmd_rm_done(ctx->pe, rc);
 	pr_devel("%s Remove pe: %i finished\n", __func__, ctx->pe);
 	mutex_unlock(&ctx->afu->spa_mutex);
 
@@ -668,6 +675,7 @@ static void recover_psl_err(struct cxl_afu *afu, u64 errstat)
 
 int cxl_ack_irq(struct cxl_context *ctx, u64 tfc, u64 psl_reset_mask)
 {
+	trace_cxl_psl_irq_ack(ctx->pe, tfc);
 	if (tfc)
 		cxl_p2n_write(ctx->afu, CXL_PSL_TFC_An, tfc);
 	if (psl_reset_mask)

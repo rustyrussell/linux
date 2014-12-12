@@ -315,7 +315,7 @@ int cxl_register_psl_err_irq(struct cxl *adapter)
 {
 	int rc;
 
-	adapter->irq_name = kasprintf(GFP_KERNEL,"cxl-%s-err",
+	adapter->irq_name = kasprintf(GFP_KERNEL, "cxl-%s-err",
 				      dev_name(&adapter->dev));
 	if (!adapter->irq_name)
 		return -ENOMEM;
@@ -347,7 +347,7 @@ int cxl_register_serr_irq(struct cxl_afu *afu)
 	u64 serr;
 	int rc;
 
-	afu->err_irq_name = kasprintf(GFP_KERNEL,"cxl-%s-err",
+	afu->err_irq_name = kasprintf(GFP_KERNEL, "cxl-%s-err",
 				      dev_name(&afu->dev));
 	if (!afu->err_irq_name)
 		return -ENOMEM;
@@ -379,7 +379,7 @@ int cxl_register_psl_irq(struct cxl_afu *afu)
 {
 	int rc;
 
-	afu->psl_irq_name = kasprintf(GFP_KERNEL,"cxl-%s",
+	afu->psl_irq_name = kasprintf(GFP_KERNEL, "cxl-%s",
 				      dev_name(&afu->dev));
 	if (!afu->psl_irq_name)
 		return -ENOMEM;

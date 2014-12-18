@@ -78,7 +78,7 @@ int cxl_afu_reset(struct cxl_afu *afu)
 			   false);
 }
 
-static int afu_check_and_enable(struct cxl_afu *afu)
+int afu_check_and_enable(struct cxl_afu *afu)
 {
 	if (afu->enabled)
 		return 0;
@@ -421,6 +421,7 @@ err:
 static int attach_afu_directed(struct cxl_context *ctx, u64 wed, u64 amr)
 {
 	u64 sr;
+	u32 pid;
 	int r, result;
 
 	assign_psn_space(ctx);
@@ -435,15 +436,20 @@ static int attach_afu_directed(struct cxl_context *ctx, u64 wed, u64 amr)
 		sr |= CXL_PSL_SR_An_MP;
 	if (mfspr(SPRN_LPCR) & LPCR_TC)
 		sr |= CXL_PSL_SR_An_TC;
-	/* HV=0, PR=1, R=1 for userspace
-	 * For kernel contexts: this would need to change
-	 */
-	sr |= CXL_PSL_SR_An_PR | CXL_PSL_SR_An_R;
-	set_endian(sr);
-	sr &= ~(CXL_PSL_SR_An_HV);
-	if (!test_tsk_thread_flag(current, TIF_32BIT))
-		sr |= CXL_PSL_SR_An_SF;
-	ctx->elem->common.pid = cpu_to_be32(current->pid);
+
+	if (ctx->kernel) {
+		// sr |=  CXL_PSL_SR_An_R; // This doesn't work on GA1
+		sr |= (mfmsr() & MSR_SF) | CXL_PSL_SR_An_HV;
+		pid = 0;
+	} else {
+		sr |= CXL_PSL_SR_An_PR | CXL_PSL_SR_An_R;
+		set_endian(sr);
+		sr &= ~(CXL_PSL_SR_An_HV);
+		if (!test_tsk_thread_flag(current, TIF_32BIT))
+			sr |= CXL_PSL_SR_An_SF;
+		pid = current->pid;
+	}
+	ctx->elem->common.pid = cpu_to_be32(pid);
 	ctx->elem->common.tid = 0;
 	ctx->elem->sr = cpu_to_be64(sr);
 
@@ -518,7 +524,7 @@ static int activate_dedicated_process(struct cxl_afu *afu)
 static int attach_dedicated(struct cxl_context *ctx, u64 wed, u64 amr)
 {
 	struct cxl_afu *afu = ctx->afu;
-	u64 sr;
+	u64 sr, pid;
 	int rc;
 
 	sr = 0;
@@ -527,10 +533,17 @@ static int attach_dedicated(struct cxl_context *ctx, u64 wed, u64 amr)
 		sr |= CXL_PSL_SR_An_MP;
 	if (mfspr(SPRN_LPCR) & LPCR_TC)
 		sr |= CXL_PSL_SR_An_TC;
-	sr |= CXL_PSL_SR_An_PR | CXL_PSL_SR_An_R;
-	if (!test_tsk_thread_flag(current, TIF_32BIT))
-		sr |= CXL_PSL_SR_An_SF;
-	cxl_p2n_write(afu, CXL_PSL_PID_TID_An, (u64)current->pid << 32);
+
+	if (ctx->kernel) {
+		sr |= (mfmsr() & MSR_SF) | CXL_PSL_SR_An_HV;
+		pid = 0;
+	} else { /* User space */
+		sr |= CXL_PSL_SR_An_PR | CXL_PSL_SR_An_R;
+		if (!test_tsk_thread_flag(current, TIF_32BIT))
+			sr |= CXL_PSL_SR_An_SF;
+		pid = (u64)current->pid << 32;
+	}
+	cxl_p2n_write(afu, CXL_PSL_PID_TID_An, pid);
 	cxl_p1n_write(afu, CXL_PSL_SR_An, sr);
 
 	if ((rc = cxl_write_sstp(afu, ctx->sstp0, ctx->sstp1)))

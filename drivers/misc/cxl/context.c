@@ -132,7 +132,7 @@ int cxl_context_iomap(struct cxl_context *ctx, struct vm_area_struct *vma)
  * return until all outstanding interrupts for this context have completed. The
  * hardware should no longer access *ctx after this has returned.
  */
-static void __detach_context(struct cxl_context *ctx)
+int ___detach_context(struct cxl_context *ctx)
 {
 	enum cxl_context_status status;
 
@@ -141,10 +141,21 @@ static void __detach_context(struct cxl_context *ctx)
 	ctx->status = CLOSED;
 	mutex_unlock(&ctx->status_mutex);
 	if (status != STARTED)
-		return;
+		return 1;
 
 	WARN_ON(cxl_detach_process(ctx));
-	afu_release_irqs(ctx);
+	return 0;
+}
+
+void __detach_context(struct cxl_context *ctx)
+{
+	int rc;
+
+	rc = ___detach_context(ctx);
+	if (rc)
+		return;
+
+	afu_release_irqs(ctx, ctx);
 	flush_work(&ctx->fault_work); /* Only needed for dedicated process */
 	wake_up_all(&ctx->wq);
 }

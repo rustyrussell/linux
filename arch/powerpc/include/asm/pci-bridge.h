@@ -14,6 +14,11 @@
 
 struct device_node;
 
+enum pci_controller_type {
+	PCI_PLATFORM,
+	PCI_CXL,
+};
+
 /*
  * Structure of a PCI controller (host bridge)
  */
@@ -33,6 +38,9 @@ struct pci_controller {
 	struct resource busn;
 
 	void __iomem *io_base_virt;
+
+	enum pci_controller_type type;
+
 #ifdef CONFIG_PPC64
 	void *io_base_alloc;
 #endif

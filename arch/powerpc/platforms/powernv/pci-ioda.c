@@ -1860,6 +1860,9 @@ static resource_size_t pnv_pci_window_alignment(struct pci_bus *bus,
 	struct pnv_phb *phb = hose->private_data;
 	int num_pci_bridges = 0;
 
+	if (hose->type == PCI_CXL)
+		return cxl_pci_window_alignment(bus, type);
+
 	bridge = bus->self;
 	while (bridge) {
 		if (pci_pcie_type(bridge) == PCI_EXP_TYPE_PCI_BRIDGE) {
@@ -1889,6 +1892,9 @@ static int pnv_pci_enable_device_hook(struct pci_dev *dev)
 	struct pci_controller *hose = pci_bus_to_host(dev->bus);
 	struct pnv_phb *phb = hose->private_data;
 	struct pci_dn *pdn;
+
+	if (hose->type == PCI_CXL)
+		return cxl_pci_enable_device_hook(dev);
 
 	/* The function is probably called while the PEs have
 	 * not be created yet. For example, resource reassignment
@@ -1962,6 +1968,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
 		hose->last_busno = 0xff;
 	}
 	hose->private_data = phb;
+	hose->type = PCI_PLATFORM;
 	phb->hub_id = hub_id;
 	phb->opal_id = phb_id;
 	phb->type = ioda_type;

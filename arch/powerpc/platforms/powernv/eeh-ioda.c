@@ -30,6 +30,7 @@
 #include <asm/pci-bridge.h>
 #include <asm/ppc-pci.h>
 #include <asm/tce.h>
+#include <misc/cxl.h>
 
 #include "powernv.h"
 #include "pci.h"
@@ -640,10 +641,14 @@ static int ioda_eeh_bridge_reset(struct pci_dev *dev, int option)
 
 void pnv_pci_reset_secondary_bus(struct pci_dev *dev)
 {
-	struct pci_controller *hose;
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	if (hose->type == PCI_CXL){
+		cxl_pci_reset_secondary_bus(dev);
+		return;
+	}
 
 	if (pci_is_root_bus(dev->bus)) {
-		hose = pci_bus_to_host(dev->bus);
 		ioda_eeh_root_reset(hose, EEH_RESET_HOT);
 		ioda_eeh_root_reset(hose, EEH_RESET_DEACTIVATE);
 	} else {

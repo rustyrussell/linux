@@ -1949,7 +1949,7 @@ static void __init pnv_pci_init_ioda_phb(struct device_node *np,
 	phb = memblock_virt_alloc(sizeof(struct pnv_phb), 0);
 
 	/* Allocate PCI controller */
-	phb->hose = hose = pcibios_alloc_controller(np);
+	phb->hose = hose = pcibios_alloc_controller(np, &pci_phb_via_ppc_md);
 	if (!phb->hose) {
 		pr_err("  Can't allocate PCI controller for %s\n",
 		       np->full_name);

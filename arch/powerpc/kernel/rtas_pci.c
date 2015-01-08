@@ -289,7 +289,7 @@ void __init find_and_init_phbs(void)
 					   strcmp(node->type, "pciex") != 0))
 			continue;
 
-		phb = pcibios_alloc_controller(node);
+		phb = pcibios_alloc_controller(node, &pci_phb_via_ppc_md);
 		if (!phb)
 			continue;
 		rtas_setup_phb(phb);

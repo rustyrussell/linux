@@ -112,7 +112,7 @@ static void __init efika_pcisetup(void)
 	printk(" controlled by %s\n", pcictrl->full_name);
 	printk("\n");
 
-	hose = pcibios_alloc_controller(pcictrl);
+	hose = pcibios_alloc_controller(pcictrl, &pci_phb_via_ppc_md);
 	if (!hose) {
 		printk(KERN_WARNING EFIKA_PLATFORM_NAME
 		       ": Can't allocate PCI controller structure for %s\n",

@@ -47,8 +47,8 @@ static int of_pci_phb_probe(struct platform_device *dev)
 
 	pr_info("Setting up PCI bus %s\n", dev->dev.of_node->full_name);
 
-	/* Alloc and setup PHB data structure */
-	phb = pcibios_alloc_controller(dev->dev.of_node);
+	/* Alloc and setup PHB data structure (ops set by pci_setup_phb). */
+	phb = pcibios_alloc_controller(dev->dev.of_node, &pci_phb_via_ppcmd);
 	if (!phb)
 		return -ENODEV;
 

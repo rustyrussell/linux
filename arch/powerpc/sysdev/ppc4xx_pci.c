@@ -366,7 +366,7 @@ static void __init ppc4xx_probe_pci_bridge(struct device_node *np)
 	}
 
 	/* Allocate the host controller data structure */
-	hose = pcibios_alloc_controller(np);
+	hose = pcibios_alloc_controller(np, &pci_phb_via_ppc_md);
 	if (!hose)
 		goto fail;
 
@@ -573,7 +573,7 @@ static void __init ppc4xx_probe_pcix_bridge(struct device_node *np)
 	}
 
 	/* Allocate the host controller data structure */
-	hose = pcibios_alloc_controller(np);
+	hose = pcibios_alloc_controller(np, &pci_phb_via_ppc_md);
 	if (!hose)
 		goto fail;
 
@@ -1938,7 +1938,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
 	bus_range = of_get_property(port->node, "bus-range", NULL);
 
 	/* Allocate the host controller data structure */
-	hose = pcibios_alloc_controller(port->node);
+	hose = pcibios_alloc_controller(port->node, &pci_phb_via_ppc_md);
 	if (!hose)
 		goto fail;
 

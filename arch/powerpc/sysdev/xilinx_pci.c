@@ -95,7 +95,7 @@ void __init xilinx_pci_init(void)
 		return;
 	}
 
-	hose = pcibios_alloc_controller(pci_node);
+	hose = pcibios_alloc_controller(pci_node, &pci_phb_via_ppc_md);
 	if (!hose) {
 		pr_err("xilinx-pci: pcibios_alloc_controller() failed\n");
 		return;

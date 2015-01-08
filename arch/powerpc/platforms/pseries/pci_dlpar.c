@@ -70,7 +70,7 @@ struct pci_controller *init_phb_dynamic(struct device_node *dn)
 
 	pr_debug("PCI: Initializing new hotplug PHB %s\n", dn->full_name);
 
-	phb = pcibios_alloc_controller(dn);
+	phb = pcibios_alloc_controller(dn, &pci_phb_via_ppc_md);
 	if (!phb)
 		return NULL;
 	rtas_setup_phb(phb);

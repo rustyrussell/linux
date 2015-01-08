@@ -123,7 +123,7 @@ static void __init pnv_pci_init_p5ioc2_phb(struct device_node *np, u64 hub_id,
 	}
 
 	phb = memblock_virt_alloc(sizeof(struct pnv_phb), 0);
-	phb->hose = pcibios_alloc_controller(np);
+	phb->hose = pcibios_alloc_controller(np, &pci_phb_via_ppc_md);
 	if (!phb->hose) {
 		pr_err("  Failed to allocate PCI controller\n");
 		return;

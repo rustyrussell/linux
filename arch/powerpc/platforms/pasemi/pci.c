@@ -193,7 +193,7 @@ static int __init pas_add_bridge(struct device_node *dev)
 
 	pr_debug("Adding PCI host bridge %s\n", dev->full_name);
 
-	hose = pcibios_alloc_controller(dev);
+	hose = pcibios_alloc_controller(dev, &pci_phb_via_ppc_md);
 	if (!hose)
 		return -ENOMEM;
 

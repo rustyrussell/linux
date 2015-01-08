@@ -19,6 +19,18 @@ enum pci_controller_type {
 	PCI_CXL,
 };
 
+struct pci_controller_ops {
+	void (*reset_secondary_bus)(struct pci_dev *dev);
+	resource_size_t (*window_alignment)(struct pci_bus *bus,
+					    unsigned long type);
+	int (*enable_device_hook)(struct pci_dev *dev);
+	int (*setup_msi_irqs)(struct pci_dev *pdev, int nvec, int type);
+	void (*teardown_msi_irqs)(struct pci_dev *dev);
+};
+
+/* FIXME: This one simply redirects into ppc_md functions. */
+extern const struct pci_controller_ops pci_phb_via_ppc_md;
+
 /*
  * Structure of a PCI controller (host bridge)
  */
@@ -40,6 +52,7 @@ struct pci_controller {
 	void __iomem *io_base_virt;
 
 	enum pci_controller_type type;
+	const struct pci_controller_ops *phb_ops;
 
 #ifdef CONFIG_PPC64
 	void *io_base_alloc;
@@ -252,7 +265,8 @@ extern void pci_process_bridge_OF_ranges(struct pci_controller *hose,
 			struct device_node *dev, int primary);
 
 /* Allocate & free a PCI host bridge structure */
-extern struct pci_controller *pcibios_alloc_controller(struct device_node *dev);
+extern struct pci_controller *pcibios_alloc_controller(struct device_node *dev,
+						       const struct pci_controller_ops *phb_ops);
 extern void pcibios_free_controller(struct pci_controller *phb);
 
 #ifdef CONFIG_PCI

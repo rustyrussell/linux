@@ -488,7 +488,7 @@ int fsl_add_bridge(struct platform_device *pdev, int is_primary)
 			" bus 0\n", dev->full_name);
 
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
-	hose = pcibios_alloc_controller(dev);
+	hose = pcibios_alloc_controller(dev, &pci_phb_via_ppc_md);
 	if (!hose)
 		return -ENOMEM;
 
@@ -806,7 +806,7 @@ int __init mpc83xx_add_bridge(struct device_node *dev)
 	}
 
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
-	hose = pcibios_alloc_controller(dev);
+	hose = pcibios_alloc_controller(dev, &pci_phb_via_ppc_md);
 	if (!hose)
 		return -ENOMEM;
 

@@ -64,7 +64,11 @@ struct dma_map_ops *get_pci_dma_ops(void)
 }
 EXPORT_SYMBOL(get_pci_dma_ops);
 
-struct pci_controller *pcibios_alloc_controller(struct device_node *dev)
+const struct pci_controller_ops pci_phb_via_ppc_md = {
+};
+
+struct pci_controller *pcibios_alloc_controller(struct device_node *dev,
+						const struct pci_controller_ops *phb_ops)
 {
 	struct pci_controller *phb;
 
@@ -77,6 +81,7 @@ struct pci_controller *pcibios_alloc_controller(struct device_node *dev)
 	spin_unlock(&hose_spinlock);
 	phb->dn = dev;
 	phb->is_dynamic = mem_init_done;
+	phb->phb_ops = phb_ops;
 #ifdef CONFIG_PPC64
 	if (dev) {
 		int nid = of_node_to_nid(dev);

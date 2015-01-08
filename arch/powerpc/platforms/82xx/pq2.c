@@ -54,7 +54,7 @@ static void __init pq2_pci_add_bridge(struct device_node *np)
 
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
 
-	hose = pcibios_alloc_controller(np);
+	hose = pcibios_alloc_controller(np, &pci_phb_via_ppc_md);
 	if (!hose)
 		return;
 

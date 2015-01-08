@@ -140,7 +140,8 @@ int cxl_pci_phb_probe(struct cxl_afu *afu)
 
 	/* Alloc and setup PHB data structure */
 //	hose = pcibios_alloc_controller(afu->dev.parent->of_node);
-	hose = pcibios_alloc_controller(of_find_node_by_name(NULL, "chosen"));
+	hose = pcibios_alloc_controller(of_find_node_by_name(NULL, "chosen"),
+					&pci_phb_via_ppc_md);
 
 
 	if (!hose)

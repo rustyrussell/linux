@@ -94,10 +94,18 @@ static void reset_secondary_bus_via_ppcmd(struct pci_dev *dev)
 	pci_reset_secondary_bus(dev);
 }
 
+static int probe_mode_via_ppcmd(struct pci_bus *bus)
+{
+	if (ppc_md.pci_probe_mode)
+		return ppc_md.pci_probe_mode(bus);
+	return PCI_PROBE_NORMAL;
+}
+
 const struct pci_controller_ops pci_phb_via_ppc_md = {
 	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
 	.window_alignment = window_alignment_via_ppcmd,
 	.enable_device_hook = enable_device_hook_via_ppcmd,
+	.probe_mode = probe_mode_via_ppcmd,
 #ifdef CONFIG_PCI_MSI
 	.setup_msi_irqs = setup_msi_irqs_via_ppcmd,
 	.teardown_msi_irqs = teardown_msi_irqs_via_ppcmd,
@@ -1648,8 +1656,8 @@ void pcibios_scan_phb(struct pci_controller *hose)
 
 	/* Get probe mode and perform scan */
 	mode = PCI_PROBE_NORMAL;
-	if (node && ppc_md.pci_probe_mode)
-		mode = ppc_md.pci_probe_mode(bus);
+	if (node)
+		mode = hose->phb_ops->probe_mode(bus);
 	pr_debug("    probe mode: %d\n", mode);
 	if (mode == PCI_PROBE_DEVTREE)
 		of_scan_bus(node, bus);

@@ -26,6 +26,7 @@ struct pci_controller_ops {
 	int (*enable_device_hook)(struct pci_dev *dev);
 	int (*setup_msi_irqs)(struct pci_dev *pdev, int nvec, int type);
 	void (*teardown_msi_irqs)(struct pci_dev *dev);
+	int (*probe_mode)(struct pci_bus *bus);
 };
 
 /* FIXME: This one simply redirects into ppc_md functions. */

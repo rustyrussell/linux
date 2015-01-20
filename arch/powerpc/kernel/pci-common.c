@@ -49,7 +49,7 @@ static int global_phb_number;		/* Global phb counter */
 
 /* ISA Memory physical address */
 resource_size_t isa_mem_base;
-
+ 
 static struct dma_map_ops *pci_dma_ops = &dma_direct_ops;
 
 void set_pci_dma_ops(struct dma_map_ops *dma_ops)
@@ -62,6 +62,13 @@ struct dma_map_ops *get_pci_dma_ops(void)
 	return pci_dma_ops;
 }
 EXPORT_SYMBOL(get_pci_dma_ops);
+
+static int enable_device_hook_via_ppcmd(struct pci_dev *dev)
+{
+	if (ppc_md.pcibios_enable_device_hook)
+		return ppc_md.pcibios_enable_device_hook(dev);
+	return 0;
+}
 
 static resource_size_t window_alignment_via_ppcmd(struct pci_bus *bus,
 						  unsigned long type)
@@ -90,6 +97,7 @@ static void reset_secondary_bus_via_ppcmd(struct pci_dev *dev)
 const struct pci_controller_ops pci_phb_via_ppc_md = {
 	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
 	.window_alignment = window_alignment_via_ppcmd,
+	.enable_device_hook = enable_device_hook_via_ppcmd,
 };
 
 struct pci_controller *pcibios_alloc_controller(struct device_node *dev,
@@ -1461,9 +1469,10 @@ EXPORT_SYMBOL_GPL(pcibios_finish_adding_to_bus);
 
 int pcibios_enable_device(struct pci_dev *dev, int mask)
 {
-	if (ppc_md.pcibios_enable_device_hook)
-		if (ppc_md.pcibios_enable_device_hook(dev))
-			return -EINVAL;
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	if (hose->phb_ops->enable_device_hook(dev))
+		return -EINVAL;
 
 	return pci_enable_resources(dev, mask);
 }

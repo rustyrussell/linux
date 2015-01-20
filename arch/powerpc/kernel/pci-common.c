@@ -50,7 +50,6 @@ static int global_phb_number;		/* Global phb counter */
 /* ISA Memory physical address */
 resource_size_t isa_mem_base;
 
-
 static struct dma_map_ops *pci_dma_ops = &dma_direct_ops;
 
 void set_pci_dma_ops(struct dma_map_ops *dma_ops)
@@ -64,7 +63,18 @@ struct dma_map_ops *get_pci_dma_ops(void)
 }
 EXPORT_SYMBOL(get_pci_dma_ops);
 
+static void reset_secondary_bus_via_ppcmd(struct pci_dev *dev)
+{
+	if (ppc_md.pcibios_reset_secondary_bus) {
+		ppc_md.pcibios_reset_secondary_bus(dev);
+		return;
+	}
+
+	pci_reset_secondary_bus(dev);
+}
+
 const struct pci_controller_ops pci_phb_via_ppc_md = {
+	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
 };
 
 struct pci_controller *pcibios_alloc_controller(struct device_node *dev,
@@ -127,12 +137,9 @@ resource_size_t pcibios_window_alignment(struct pci_bus *bus,
 
 void pcibios_reset_secondary_bus(struct pci_dev *dev)
 {
-	if (ppc_md.pcibios_reset_secondary_bus) {
-		ppc_md.pcibios_reset_secondary_bus(dev);
-		return;
-	}
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
 
-	pci_reset_secondary_bus(dev);
+	hose->phb_ops->reset_secondary_bus(dev);
 }
 
 static resource_size_t pcibios_io_size(const struct pci_controller *hose)

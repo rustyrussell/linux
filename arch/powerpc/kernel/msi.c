@@ -13,7 +13,7 @@
 
 #include <asm/machdep.h>
 
-int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+int setup_msi_irqs_via_ppcmd(struct pci_dev *pdev, int nvec, int type)
 {
 	if (!ppc_md.setup_msi_irqs || !ppc_md.teardown_msi_irqs) {
 		pr_debug("msi: Platform doesn't provide MSI callbacks.\n");
@@ -24,10 +24,24 @@ int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
 	if (type == PCI_CAP_ID_MSI && nvec > 1)
 		return 1;
 
-	return ppc_md.setup_msi_irqs(dev, nvec, type);
+	return ppc_md.setup_msi_irqs(pdev, nvec, type);
+}
+
+void teardown_msi_irqs_via_ppcmd(struct pci_dev *dev)
+{
+	ppc_md.teardown_msi_irqs(dev);
+}
+
+int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+{
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	return hose->phb_ops->setup_msi_irqs(dev, nvec, type);
 }
 
 void arch_teardown_msi_irqs(struct pci_dev *dev)
 {
-	ppc_md.teardown_msi_irqs(dev);
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
+	hose->phb_ops->teardown_msi_irqs(dev);
 }

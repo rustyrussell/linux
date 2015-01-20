@@ -178,5 +178,10 @@ extern void pcibios_setup_bus_self(struct pci_bus *bus);
 extern void pcibios_setup_phb_io_space(struct pci_controller *hose);
 extern void pcibios_scan_phb(struct pci_controller *hose);
 
+#ifdef CONFIG_PCI_MSI
+int setup_msi_irqs_via_ppcmd(struct pci_dev *pdev, int nvec, int type);
+void teardown_msi_irqs_via_ppcmd(struct pci_dev *dev);
+#endif
+
 #endif	/* __KERNEL__ */
 #endif /* __ASM_POWERPC_PCI_H */

@@ -98,6 +98,10 @@ const struct pci_controller_ops pci_phb_via_ppc_md = {
 	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
 	.window_alignment = window_alignment_via_ppcmd,
 	.enable_device_hook = enable_device_hook_via_ppcmd,
+#ifdef CONFIG_PCI_MSI
+	.setup_msi_irqs = setup_msi_irqs_via_ppcmd,
+	.teardown_msi_irqs = teardown_msi_irqs_via_ppcmd,
+#endif
 };
 
 struct pci_controller *pcibios_alloc_controller(struct device_node *dev,

@@ -63,6 +63,20 @@ struct dma_map_ops *get_pci_dma_ops(void)
 }
 EXPORT_SYMBOL(get_pci_dma_ops);
 
+static resource_size_t window_alignment_via_ppcmd(struct pci_bus *bus,
+						  unsigned long type)
+{
+	if (ppc_md.pcibios_window_alignment)
+		return ppc_md.pcibios_window_alignment(bus, type);
+
+	/*
+	 * PCI core will figure out the default
+	 * alignment: 4KiB for I/O and 1MiB for
+	 * memory window.
+	 */
+	return 1;
+}
+
 static void reset_secondary_bus_via_ppcmd(struct pci_dev *dev)
 {
 	if (ppc_md.pcibios_reset_secondary_bus) {
@@ -75,6 +89,7 @@ static void reset_secondary_bus_via_ppcmd(struct pci_dev *dev)
 
 const struct pci_controller_ops pci_phb_via_ppc_md = {
 	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
+	.window_alignment = window_alignment_via_ppcmd,
 };
 
 struct pci_controller *pcibios_alloc_controller(struct device_node *dev,
@@ -124,15 +139,9 @@ void pcibios_free_controller(struct pci_controller *phb)
 resource_size_t pcibios_window_alignment(struct pci_bus *bus,
 					 unsigned long type)
 {
-	if (ppc_md.pcibios_window_alignment)
-		return ppc_md.pcibios_window_alignment(bus, type);
+	struct pci_controller *hose = pci_bus_to_host(bus);
 
-	/*
-	 * PCI core will figure out the default
-	 * alignment: 4KiB for I/O and 1MiB for
-	 * memory window.
-	 */
-	return 1;
+	return hose->phb_ops->window_alignment(bus, type);
 }
 
 void pcibios_reset_secondary_bus(struct pci_dev *dev)

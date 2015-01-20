@@ -101,11 +101,18 @@ static int probe_mode_via_ppcmd(struct pci_bus *bus)
 	return PCI_PROBE_NORMAL;
 }
 
+static void dma_dev_setup_via_ppcmd(struct pci_dev *dev)
+{
+	if (ppc_md.pci_dma_dev_setup)
+		ppc_md.pci_dma_dev_setup(dev);
+}
+
 const struct pci_controller_ops pci_phb_via_ppc_md = {
 	.reset_secondary_bus = reset_secondary_bus_via_ppcmd,
 	.window_alignment = window_alignment_via_ppcmd,
 	.enable_device_hook = enable_device_hook_via_ppcmd,
 	.probe_mode = probe_mode_via_ppcmd,
+	.dma_dev_setup = dma_dev_setup_via_ppcmd,
 #ifdef CONFIG_PCI_MSI
 	.setup_msi_irqs = setup_msi_irqs_via_ppcmd,
 	.teardown_msi_irqs = teardown_msi_irqs_via_ppcmd,
@@ -1000,6 +1007,8 @@ void pcibios_setup_bus_self(struct pci_bus *bus)
 
 static void pcibios_setup_device(struct pci_dev *dev)
 {
+	struct pci_controller *hose = pci_bus_to_host(dev->bus);
+
 	/* Fixup NUMA node as it may not be setup yet by the generic
 	 * code and is needed by the DMA init
 	 */
@@ -1010,8 +1019,7 @@ static void pcibios_setup_device(struct pci_dev *dev)
 	set_dma_offset(&dev->dev, PCI_DRAM_OFFSET);
 
 	/* Additional platform DMA/iommu setup */
-	if (ppc_md.pci_dma_dev_setup)
-		ppc_md.pci_dma_dev_setup(dev);
+	hose->phb_ops->dma_dev_setup(dev);
 
 	/* Read default IRQs and fixup if necessary */
 	pci_read_irq_line(dev);

@@ -643,10 +643,7 @@ void pnv_pci_reset_secondary_bus(struct pci_dev *dev)
 {
 	struct pci_controller *hose = pci_bus_to_host(dev->bus);
 
-	if (hose->type == PCI_CXL){
-		cxl_pci_reset_secondary_bus(dev);
-		return;
-	}
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	if (pci_is_root_bus(dev->bus)) {
 		ioda_eeh_root_reset(hose, EEH_RESET_HOT);

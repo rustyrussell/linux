@@ -1860,8 +1860,7 @@ static resource_size_t pnv_pci_window_alignment(struct pci_bus *bus,
 	struct pnv_phb *phb = hose->private_data;
 	int num_pci_bridges = 0;
 
-	if (hose->type == PCI_CXL)
-		return cxl_pci_window_alignment(bus, type);
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	bridge = bus->self;
 	while (bridge) {
@@ -1893,8 +1892,7 @@ static int pnv_pci_enable_device_hook(struct pci_dev *dev)
 	struct pnv_phb *phb = hose->private_data;
 	struct pci_dn *pdn;
 
-	if (hose->type == PCI_CXL)
-		return cxl_pci_enable_device_hook(dev);
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	/* The function is probably called while the PEs have
 	 * not be created yet. For example, resource reassignment

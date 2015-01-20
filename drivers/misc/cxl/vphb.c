@@ -15,7 +15,7 @@ void cxl_pci_dma_dev_setup(struct pci_dev *pdev)
 	printk("WARNING %s", __func__);
 }
 
-int cxl_pci_probe_mode(struct pci_bus *bus)
+static int cxl_pci_probe_mode(struct pci_bus *bus)
 {
 	printk("WARNING %s", __func__);
 	return PCI_PROBE_NORMAL;
@@ -27,32 +27,31 @@ int cxl_msi_check_device(struct pci_dev* pdev, int nvec, int type)
 	return -ENODEV;
 }
 
-int cxl_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
+static int cxl_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
 {
 	printk("WARNING %s", __func__);
 	return -ENODEV;
 }
 
-int cxl_teardown_msi_irqs(struct pci_dev *pdev)
+static void cxl_teardown_msi_irqs(struct pci_dev *pdev)
+{
+	printk("WARNING %s", __func__);
+}
+
+static int cxl_pci_enable_device_hook(struct pci_dev *dev)
 {
 	printk("WARNING %s", __func__);
 	return -ENODEV;
 }
 
-int cxl_pci_enable_device_hook(struct pci_dev *dev)
-{
-	printk("WARNING %s", __func__);
-	return -ENODEV;
-}
-
-resource_size_t cxl_pci_window_alignment(struct pci_bus *bus,
+static resource_size_t cxl_pci_window_alignment(struct pci_bus *bus,
 						unsigned long type)
 {
 	printk("WARNING %s", __func__);
 	return -1;
 }
 
-void cxl_pci_reset_secondary_bus(struct pci_dev *dev)
+static void cxl_pci_reset_secondary_bus(struct pci_dev *dev)
 {
 	printk("WARNING %s", __func__);
 }
@@ -134,6 +133,15 @@ static struct pci_ops cxl_pcie_pci_ops =
 	.write = cxl_pcie_write_config,
 };
 
+static const struct pci_controller_ops cxl_phb_ops = {
+	.reset_secondary_bus = cxl_pci_reset_secondary_bus,
+	.window_alignment = cxl_pci_window_alignment,
+	.enable_device_hook = cxl_pci_enable_device_hook,
+	.probe_mode = cxl_pci_probe_mode,
+	.setup_msi_irqs = cxl_setup_msi_irqs,
+	.teardown_msi_irqs = cxl_teardown_msi_irqs,
+};
+
 int cxl_pci_phb_probe(struct cxl_afu *afu)
 {
 	struct pci_controller *hose;
@@ -141,7 +149,7 @@ int cxl_pci_phb_probe(struct cxl_afu *afu)
 	/* Alloc and setup PHB data structure */
 //	hose = pcibios_alloc_controller(afu->dev.parent->of_node);
 	hose = pcibios_alloc_controller(of_find_node_by_name(NULL, "chosen"),
-					&pci_phb_via_ppc_md);
+					&cxl_phb_ops);
 
 
 	if (!hose)

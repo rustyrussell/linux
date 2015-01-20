@@ -60,8 +60,7 @@ static int pnv_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
 	if (WARN_ON(!phb) || !phb->msi_bmp.bitmap)
 		return -ENODEV;
 
-	if (hose->type == PCI_CXL)
-		return cxl_setup_msi_irqs(pdev, nvec, type);
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	if (pdn && pdn->force_32bit_msi && !phb->msi32_support)
 		return -ENODEV;
@@ -105,10 +104,7 @@ static void pnv_teardown_msi_irqs(struct pci_dev *pdev)
 	struct pnv_phb *phb = hose->private_data;
 	struct msi_desc *entry;
 
-	if (hose->type == PCI_CXL) {
-		cxl_teardown_msi_irqs(pdev);
-		return;
-	}
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	if (WARN_ON(!phb))
 		return;
@@ -742,10 +738,7 @@ static void pnv_pci_dma_dev_setup(struct pci_dev *pdev)
 	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
 	struct pnv_phb *phb = hose->private_data;
 
-	if (hose->type == PCI_CXL) {
-		cxl_pci_dma_dev_setup(pdev);
-		return;
-	}
+	BUG_ON(hose->type == PCI_CXL);
 
 	/* If we have no phb structure, try to setup a fallback based on
 	 * the device-tree (RTAS PCI for example)
@@ -802,8 +795,7 @@ static int pnv_pci_probe_mode(struct pci_bus *bus)
 	const __be64 *tstamp;
 	u64 now, target;
 
-	if (hose->type == PCI_CXL)
-		return cxl_pci_probe_mode(bus);
+	BUG_ON(hose->type != PCI_PLATFORM);
 
 	/* We hijack this as a way to ensure we have waited long
 	 * enough since the reset was lifted on the PCI bus
